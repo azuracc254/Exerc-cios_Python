@@ -1,6 +1,6 @@
 #Exercício_09
 #Python 01
-#Declara as variaveis e gurada laranja e suco
+#Declara as variaveis e guarda laranja e suco
 suco1 = 'laranja'
 suco2 = 'acerola'
 print(suco1," ",suco2)

@@ -10,7 +10,7 @@ a = float(input("Digite o valor de a: "))
 b = float(input("Digite o valor de B: "))
 c = float(input("Digite o valor de c: "))
 #Fórmula de delta
-delta = ((b**2) - 4 * (a) * (c))
+delta = (b**2 - (4 * a * c))
 #Exibe os três valores formatados para melhor entendimento
 print(f"{a}x^2 + {b}x + {c}")
 #Exibe o resultado
