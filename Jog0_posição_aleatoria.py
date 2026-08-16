@@ -1,3 +1,4 @@
+
 #Jog0_posição aleatoria
 import pygame
 from pygame.locals import *
@@ -24,44 +25,68 @@ fonte_durante = pygame.font.Font(None, 25)
 
 relogio = pygame.time.Clock()
 
-x_azul = randint(40, 600)
-y_azul = randint(50, 430)
+x_azul = randint(40, 580)
+y_azul = randint(50, 380)
+
+#Cria o corpo da cobra
+cobra = [(x, y)]
+
+#Define a direção inicial da cobra
+direcao = "direita"
 
 while True:
     tela.fill(branco)
     relogio.tick(35)
     texto_durante = fonte_durante.render(f"Score: {pontos}", True, azul)
     tela.blit(texto_durante, (10, 10))
+
     #Basicamente pega um evento e seu tipo o tempo todo
     for event in pygame.event.get():
         #Verifica se uma tecla foi clicada
         if event.type == KEYDOWN:
             #Verifica qual tecla foi clicada
-            if event.key == K_a:
-                x = x -5
-            elif event.key == K_d:
-                x = x + 5
-            elif event.key == K_w:
-                y = y - 5
-            elif event.key == K_s:
-                y = y + 5
+            if event.key == K_a and direcao != "direita":
+                direcao = "esquerda"
+            elif event.key == K_d and direcao != "esquerda":
+                direcao = "direita"
+            elif event.key == K_w and direcao != "baixo":
+                direcao = "cima"
+            elif event.key == K_s and direcao != "cima":
+                direcao = "baixo"
+
         #Verifica se a pessoa selecionou sair
         if event.type == QUIT:
             #Executa o método exit()
             exit()
-    #Verifica qual tecla foi pressionada
-    if pygame.key.get_pressed()[K_a]:
+
+    #Verifica qual direção a cobra está seguindo
+    if direcao == "esquerda":
         x = x - 5
-    if pygame.key.get_pressed()[K_d]:
+    if direcao == "direita":
         x = x + 5
-    if pygame.key.get_pressed()[K_w]:
+    if direcao == "cima":
         y = y - 5
-    if pygame.key.get_pressed()[K_s]:
+    if direcao == "baixo":
         y = y + 5
+
+    #Adiciona a nova posição da cabeça da cobra
+    cobra.append((x, y))
+
+    #Mantém o tamanho da cobra
+    if len(cobra) > pontos + 1:
+        cobra.pop(0)
+
+    #Desenha a cobra na tela
+    for parte in cobra:
+        pygame.draw.rect(tela, (255, 0, 0), (parte[0], parte[1], 20, 20))
+
     #"pygame.draw" é um método que desenha algo na tela, neste caso o "rect" -> retângulo
     #Seus parâmetros são: tela em que será exibido, cor no espectro RGB, posição e proporção (altura e largura)
-    ret_vermelho = pygame.draw.rect(tela, (255, 0, 0), (x, y, 20, 20))
     ret_azul = pygame.draw.rect(tela, (0, 0, 255), (x_azul, y_azul, 20, 20))
+
+    #Cria um retângulo para verificar a colisão da cabeça com o azul
+    ret_vermelho = pygame.Rect(x, y, 20, 20)
+
     #O método "colliderect()" detecta colisão entre dois retângulos "rect"
     if ret_vermelho.colliderect(ret_azul):
         x_azul = randint(40, 580)
@@ -72,10 +97,11 @@ while True:
     #Verifica se o player encostou nas bordas da tela
     if x < 0 or x + 20 > largura or y < 0 or y + 20 > altura:
         #Exibe um texto de derrota na tela
-        texto_derrota = fonte_derrota.render(f"You Lose!\n Score: {pontos_final}", True, azul, vermelho)
+        texto_derrota = fonte_derrota.render(f"You Lose! Score: {pontos_final}", True, azul, vermelho)
         tela.fill(branco)
         tela.blit(texto_derrota, (100, 180))
         pygame.display.update()
+
         #Pega o evento que acabou de ocorrer
         while True:
             for event in pygame.event.get():
@@ -86,9 +112,26 @@ while True:
                     if event.key == K_RETURN or event.key == K_KP_ENTER:
                         exit()
 
+    #Verifica se a cabeça bateu no corpo da cobra
+    if len(cobra) > 4:
+        for parte in cobra[:-1]:
+            if x == parte[0] and y == parte[1]:
+                #Exibe um texto de derrota na tela
+                texto_derrota = fonte_derrota.render(f"You Lose! Score: {pontos_final}", True, azul, vermelho)
+                tela.fill(branco)
+                tela.blit(texto_derrota, (100, 180))
+                pygame.display.update()
+
+                #Pega o evento que acabou de ocorrer
+                while True:
+                    for event in pygame.event.get():
+                        if event.type == QUIT:
+                            exit()
+                        #Verifica se é a tecla Enter
+                        if event.type == KEYDOWN:
+                            if event.key == K_RETURN or event.key == K_KP_ENTER:
+                                exit()
     pygame.display.update()
-
-
 
 
 #Listas em Python
